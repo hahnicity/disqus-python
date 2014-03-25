@@ -1,6 +1,7 @@
 *.pyc
+*.sw[op]
 dist/
 build/
-*.egg-info/
-nosetests.xml
 *.egg
+*.egg-info
+nosetests.xml
