@@ -19,12 +19,14 @@ Parameters (including the ability to override version, api_secret, and format) a
 Paginating through endpoints is easy as well::
 
 	from disqusapi import Paginator
-	paginator = Paginator(api.trends.listThreads, forum='disqus')
+
+	paginator = Paginator(disqus.trends.listThreads, forum='disqus')
 	for result in paginator:
 	    print result
 
 	# pull in a maximum of 500 results (this limit param differs from the endpoint's limit param)
 	for result in paginator(limit=500):
 	    print result
+
 
 Documentation on all methods, as well as general API usage can be found at http://disqus.com/api/
