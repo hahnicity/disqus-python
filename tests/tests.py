@@ -3,6 +3,9 @@ import os
 import unittest
 
 import disqusapi
+from disqusapi.client import HOST
+from disqusapi.result import Result
+
 
 def requires(*env_vars):
     def wrapped(func):
@@ -12,6 +15,7 @@ def requires(*env_vars):
         return func
     return wrapped
 
+
 class MockResponse(object):
     def __init__(self, body, status=200):
         self.body = body
@@ -20,10 +24,11 @@ class MockResponse(object):
     def read(self):
         return self.body
 
+
 class DisqusAPITest(unittest.TestCase):
-    API_SECRET = 'b'*64
-    API_PUBLIC = 'c'*64
-    HOST = os.environ.get('DISQUS_API_HOST', disqusapi.HOST)
+    API_SECRET = 'b' * 64
+    API_PUBLIC = 'c' * 64
+    HOST = os.environ.get('DISQUS_API_HOST', HOST)
 
     def setUp(self):
         disqusapi.HOST = self.HOST
@@ -61,17 +66,14 @@ class DisqusAPITest(unittest.TestCase):
     def test_paginator(self):
         def iter_results():
             for n in xrange(11):
-                yield disqusapi.Result(
-                    response=[n]*10,
-                    cursor={
-                        'id': n,
-                        'more': n < 10,
-                    },
+                yield Result(
+                    response=[n] * 10,
+                    cursor={'id': n, 'more': n < 10},
                 )
 
         api = disqusapi.DisqusAPI(self.API_SECRET, self.API_PUBLIC)
 
-        with mock.patch('disqusapi.Resource._request') as _request:
+        with mock.patch('disqusapi.client.Resource._request') as _request:
             iterator = iter_results()
             _request.return_value = iterator.next()
             paginator = disqusapi.Paginator(api.posts.list, forum='disqus')
@@ -80,6 +82,7 @@ class DisqusAPITest(unittest.TestCase):
                 if n % 10 == 0:
                     iterator.next()
         self.assertEquals(n, 99)
+
 
 if __name__ == '__main__':
     unittest.main()
